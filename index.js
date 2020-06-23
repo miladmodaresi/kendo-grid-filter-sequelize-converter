@@ -1,4 +1,5 @@
 var { Op } = require('sequelize');
+const { sequelize } = require('../../app/Models/index.js');
 
 function KendoGridFilterSequelizeConverter() {
 
@@ -33,15 +34,12 @@ function KendoGridFilterSequelizeConverter() {
 
     function addSimpleCondition(filter) {
         var item = translateFieldCondition(filter);
-
-        var toInsert = {};
-        if (item.name == '') {
-            toInsert['$' + filter.field + '$'] = item.value;
+		
+		if (item.name == '') {
+            toInsert = sequelize.where(sequelize.col(filter.field), '=', item.value);
         } else {
-            toInsert['$' + filter.field + '$'] = {};
-            toInsert['$' + filter.field + '$'][item.name] = item.value;
+            toInsert = sequelize.where(sequelize.col(filter.field), item.name, item.value);
         }
-
         return toInsert;
     }
 
